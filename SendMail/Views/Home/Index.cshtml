@@ -1,0 +1,120 @@
+﻿@model SendMail.ViewModel.EmailSettings
+
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#txtSubject').val('Default Text');
+        $('#txtBody').val('Default Text');
+
+        $("#btnSend").click(function () {
+            var obj = {};
+            obj.SmtpHost = $('#txtSmtpHost').val();
+            obj.SmtpPort = $('#txtSmtpPort').val();
+            obj.Username = $('#txtUsername').val();
+            obj.Password = $('#txtPassword').val();
+            obj.From = $('#txtFrom').val();
+            obj.To = $('#txtTo').val();
+            obj.Subject = $('#txtSubject').val();
+            obj.Body = $('#txtBody').val();
+            debugger;
+            obj.SSL = $("#chkSSL").is(":checked") ? "true" : "false"
+            $.ajax({
+                url: '/Home/SendEmail',
+                type: "POST",
+                dataType: "JSON",
+                data: obj,
+                success: function (msg) {
+                    debugger;
+                    if (msg == "1") {
+                        $("#lblmsg").removeClass("alert alert-danger");
+                        $("#lblmsg").addClass("alert alert-success");
+                        $("#lblmsg").html('Sent Successfully');
+                        $("#lblmsg").css("display", "block");
+                    }
+                    else {
+                        $("#lblmsg").removeClass("alert alert-success");
+                        $("#lblmsg").addClass("alert alert-danger");
+                        $("#lblmsg").html(msg);
+                        $("#lblmsg").css("display", "block");
+                    }
+                }
+            });
+        });
+
+    });
+</script>
+
+
+
+<div class="page-header">
+    Send Email
+</div>
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        @Html.TextBoxFor(m => m.SmtpHost, new { @class = "form-control", @placeholder = "Smtp Host", @id = "txtSmtpHost" })
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        @Html.TextBoxFor(m => m.SmtpPort, new { @class = "form-control", @placeholder = "Smtp Port", @id = "txtSmtpPort" })
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        @Html.TextBoxFor(m => m.Username, new { @class = "form-control", @placeholder = "Username", @id = "txtUsername" })
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        @Html.TextBoxFor(m => m.Password, new { @class = "form-control", @placeholder = "Password", @id = "txtPassword" })
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        @Html.TextBoxFor(m => m.From, new { @class = "form-control", @placeholder = "From Email", @id = "txtFrom" })
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        @Html.TextBoxFor(m => m.To, new { @class = "form-control", @placeholder = "To Email", @id = "txtTo" })
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label>Subject</label>
+            @Html.TextBoxFor(m => m.Subject, new { @class = "form-control", @placeholder = "Subject", @id = "txtSubject" })
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label>Body</label>
+            @Html.TextBoxFor(m => m.Body, new { @class = "form-control", @placeholder = "Body (Default Text)", @id = "txtBody" })
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <input id="chkSSL" type="checkbox" />
+            <label>Enable SSL</label>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <input id="btnSend" type="button" value="Send" class="btn btn-primary" />
+    </div>
+</div>
+
+<br />
+<div id="lblmsg">
+</div>
