@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Net;
 using System.Net.Mail;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using SendMail.ViewModel;
 
@@ -24,6 +22,9 @@ namespace SendMail.Controllers
             string result = "";
             try
             {
+                // Microsoft 365 requires TLS 1.2 or later for authenticated SMTP
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
                 MailMessage mail = new MailMessage(obj.From, obj.To);
                 SmtpClient client = new SmtpClient();
                 client.UseDefaultCredentials = false;
@@ -31,7 +32,8 @@ namespace SendMail.Controllers
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
 
                 client.Host = obj.SmtpHost;
-                client.Credentials = new System.Net.NetworkCredential(obj.Username, obj.Password);
+                client.Credentials = new NetworkCredential(obj.Username, obj.Password);
+                // EnableSsl = true triggers STARTTLS on port 587 (required by Microsoft 365)
                 client.EnableSsl = obj.SSL;
 
                 mail.Subject = obj.Subject;
@@ -39,8 +41,6 @@ namespace SendMail.Controllers
                 mail.IsBodyHtml = true;
                 mail.BodyEncoding = UTF8Encoding.UTF8;
                 mail.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
-
-
 
                 client.Send(mail);
                 result = "1";
@@ -56,7 +56,6 @@ namespace SendMail.Controllers
                     result = ex.Message;
                 }
             }
-
 
             return Json(result, JsonRequestBehavior.AllowGet);
         }

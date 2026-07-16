@@ -9,8 +9,12 @@
 
     $(document).ready(function () {
 
-        $('#txtSubject').val('Default Text');
-        $('#txtBody').val('Default Text');
+        if (!$('#txtSubject').val()) {
+            $('#txtSubject').val('Default Text');
+        }
+        if (!$('#txtBody').val()) {
+            $('#txtBody').val('Default Text');
+        }
 
         $("#btnSend").click(function () {
             var obj = {};
@@ -22,15 +26,13 @@
             obj.To = $('#txtTo').val();
             obj.Subject = $('#txtSubject').val();
             obj.Body = $('#txtBody').val();
-            debugger;
-            obj.SSL = $("#chkSSL").is(":checked") ? "true" : "false"
+            obj.SSL = $("#chkSSL").is(":checked");
             $.ajax({
                 url: '/Home/SendEmail',
                 type: "POST",
                 dataType: "JSON",
                 data: obj,
                 success: function (msg) {
-                    debugger;
                     if (msg == "1") {
                         $("#lblmsg").removeClass("alert alert-danger");
                         $("#lblmsg").addClass("alert alert-success");
@@ -69,7 +71,7 @@
         @Html.TextBoxFor(m => m.Username, new { @class = "form-control", @placeholder = "Username", @id = "txtUsername" })
     </div>
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        @Html.TextBoxFor(m => m.Password, new { @class = "form-control", @placeholder = "Password", @id = "txtPassword" })
+        @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Password", @id = "txtPassword", @autocomplete = "off" })
     </div>
 </div>
 <br />
@@ -104,7 +106,7 @@
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <input id="chkSSL" type="checkbox" />
-            <label>Enable SSL</label>
+            <label>Enable STARTTLS / TLS</label>
         </div>
     </div>
 </div>
